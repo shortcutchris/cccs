@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Cheatsheet — The Ultimate Reference</title>
+  <meta name="description" content="Interactive cheatsheet for Claude Code — keyboard shortcuts, slash commands, workflows, CLI flags, MCP servers, and more.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0d1117',
+            card: '#161b22',
+            border: '#30363d',
+            muted: '#8b949e',
+            accent: '#a855f7',
+            orange: '#f97316',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0d1117; }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; }
+    .accordion-body.open { max-height: 200px; }
+    .nav-pill::-webkit-scrollbar { display: none; }
+    .nav-pill { -ms-overflow-style: none; scrollbar-width: none; }
+    .chevron { transition: transform 0.2s ease; }
+    .chevron.rotate { transform: rotate(180deg); }
+    .copy-btn:active { transform: scale(0.9); }
+    @media print {
+      body { background: white !important; color: black !important; }
+      .no-print { display: none !important; }
+      .print-break { page-break-inside: avoid; }
+      .accordion-body { max-height: none !important; overflow: visible !important; }
+      header, .hero-section { break-after: avoid; }
+      section { break-inside: avoid; }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="text-gray-200 font-sans min-h-screen" x-data="cheatsheet()" x-init="init()">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur border-b border-border no-print">
+    <div class="max-w-6xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between gap-3">
+        <a href="#" class="flex items-center gap-2 shrink-0">
+          <div class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center font-bold text-white text-sm">CC</div>
+          <span class="font-bold text-white hidden sm:inline">Claude Code</span>
+        </a>
+        <div class="flex-1 max-w-md">
+          <input
+            type="text"
+            x-model="search"
+            placeholder="Search commands..."
+            class="w-full bg-card border border-border rounded-lg px-3 py-1.5 text-sm text-gray-200 placeholder-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+          >
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button @click="window.print()" class="text-muted hover:text-white transition text-sm px-2 py-1 rounded hover:bg-card" title="Export PDF">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          </button>
+          <a href="https://github.com/chhubmann/claude-code-cheatsheet" target="_blank" class="text-muted hover:text-white transition" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-20">
+
+    <!-- Hero -->
+    <section class="hero-section text-center py-12 sm:py-16">
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-white mb-4">
+        The Ultimate <span class="text-accent">Claude Code</span> Reference
+      </h1>
+      <p class="text-muted text-lg mb-6 max-w-2xl mx-auto">
+        Every shortcut, command, and workflow — searchable, copyable, always up to date.
+      </p>
+      <div class="flex items-center justify-center gap-3 flex-wrap">
+        <span class="bg-accent/20 text-accent px-3 py-1 rounded-full text-sm font-medium" x-text="'v' + version"></span>
+        <span class="bg-card border border-border px-3 py-1 rounded-full text-sm text-muted" x-text="'Updated ' + lastUpdated"></span>
+        <span class="bg-card border border-border px-3 py-1 rounded-full text-sm text-muted" x-text="totalItems + ' commands'"></span>
+      </div>
+    </section>
+
+    <!-- Section Nav Pills -->
+    <nav class="nav-pill flex gap-2 overflow-x-auto pb-4 mb-8 no-print">
+      <template x-for="section in sections" :key="section.id">
+        <a
+          :href="'#' + section.id"
+          class="shrink-0 px-3 py-1.5 rounded-full text-sm font-medium border transition hover:opacity-80"
+          :style="'border-color:' + section.color + '40; color:' + section.color + '; background:' + section.color + '15'"
+          x-text="section.title"
+        ></a>
+      </template>
+    </nav>
+
+    <!-- Sections -->
+    <template x-for="section in filteredSections" :key="section.id">
+      <section :id="section.id" class="mb-10 print-break">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-1 h-6 rounded-full" :style="'background:' + section.color"></div>
+          <h2 class="text-xl font-bold text-white" x-text="section.title"></h2>
+          <span class="text-xs text-muted bg-card px-2 py-0.5 rounded-full" x-text="section.items.length + ' items'"></span>
+        </div>
+        <div class="grid gap-2">
+          <template x-for="(item, idx) in section.items" :key="section.id + '-' + idx">
+            <div class="bg-card border border-border rounded-lg overflow-hidden">
+              <div
+                class="flex items-center gap-3 px-4 py-3 cursor-pointer select-none hover:bg-white/5 transition"
+                @click="toggle(section.id, idx)"
+              >
+                <span
+                  class="font-mono text-xs px-2 py-0.5 rounded shrink-0 font-medium"
+                  :style="'background:' + section.color + '20; color:' + section.color"
+                  x-text="item.key"
+                ></span>
+                <span class="flex-1 text-sm text-gray-300" x-text="item.description"></span>
+                <button
+                  class="copy-btn text-muted hover:text-white p-1 no-print"
+                  @click.stop="copyToClipboard(item.key)"
+                  title="Copy"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </button>
+                <svg
+                  class="w-4 h-4 text-muted chevron no-print"
+                  :class="isOpen(section.id, idx) && 'rotate'"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+              <div class="accordion-body" :class="isOpen(section.id, idx) && 'open'">
+                <p class="px-4 pb-3 text-sm text-muted" x-text="item.explanation"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </template>
+
+    <!-- No results -->
+    <div x-show="search && filteredSections.length === 0" class="text-center py-16">
+      <p class="text-muted text-lg">No commands match "<span class="text-white" x-text="search"></span>"</p>
+    </div>
+
+    <!-- Newsletter -->
+    <section class="my-16 bg-card border border-border rounded-xl p-6 sm:p-8 text-center no-print">
+      <h3 class="text-xl font-bold text-white mb-2">Stay Updated</h3>
+      <p class="text-muted mb-6 text-sm">Get notified when Claude Code ships new features.</p>
+      <form
+        @submit.prevent="subscribeNewsletter()"
+        class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+      >
+        <input
+          type="email"
+          x-model="email"
+          placeholder="you@example.com"
+          required
+          class="flex-1 bg-bg border border-border rounded-lg px-4 py-2 text-sm text-gray-200 placeholder-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+        >
+        <button
+          type="submit"
+          class="bg-accent hover:bg-accent/90 text-white font-medium px-6 py-2 rounded-lg text-sm transition"
+        >
+          Subscribe
+        </button>
+      </form>
+      <p x-show="subscribed" x-transition class="text-green-400 text-sm mt-3">Thanks! You're on the list.</p>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-border py-8 mt-8 no-print">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
+      <p>Built for the Claude Code community</p>
+      <div class="flex items-center gap-4">
+        <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" class="hover:text-white transition">Official Docs</a>
+        <a href="https://github.com/chhubmann/claude-code-cheatsheet" target="_blank" class="hover:text-white transition">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    function cheatsheet() {
+      return {
+        sections: [],
+        version: '',
+        lastUpdated: '',
+        search: '',
+        email: '',
+        subscribed: false,
+        openItems: {},
+
+        get totalItems() {
+          return this.sections.reduce((sum, s) => sum + s.items.length, 0);
+        },
+
+        get filteredSections() {
+          if (!this.search.trim()) return this.sections;
+          const q = this.search.toLowerCase();
+          return this.sections
+            .map(s => ({
+              ...s,
+              items: s.items.filter(i =>
+                i.key.toLowerCase().includes(q) ||
+                i.description.toLowerCase().includes(q) ||
+                (i.explanation && i.explanation.toLowerCase().includes(q))
+              )
+            }))
+            .filter(s => s.items.length > 0);
+        },
+
+        async init() {
+          try {
+            const res = await fetch('data/cheatsheet.json');
+            const data = await res.json();
+            this.sections = data.sections;
+            this.version = data.version;
+            this.lastUpdated = data.lastUpdated;
+          } catch (e) {
+            console.error('Failed to load cheatsheet data:', e);
+          }
+        },
+
+        toggle(sectionId, idx) {
+          const key = sectionId + '-' + idx;
+          this.openItems[key] = !this.openItems[key];
+        },
+
+        isOpen(sectionId, idx) {
+          return this.openItems[sectionId + '-' + idx] || false;
+        },
+
+        async copyToClipboard(text) {
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+        },
+
+        subscribeNewsletter() {
+          console.log('Newsletter signup:', this.email);
+          this.subscribed = true;
+          this.email = '';
+        }
+      };
+    }
+  </script>
+
+</body>
+</html>

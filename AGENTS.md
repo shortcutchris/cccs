@@ -1,5 +1,7 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Static Site — No Build Step
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+This is a plain HTML + Alpine.js + Tailwind CDN site. No npm, no build, no framework.
+
+- `index.html` — the entire app
+- `data/cheatsheet.json` — all content
+- Deploy: GitHub Pages (static files only)
