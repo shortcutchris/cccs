@@ -25,9 +25,9 @@
   <style>
     :root {
       --bg: #0d1117;
-      --card: #161b22;
+      --card: #1c2128;
       --border: #30363d;
-      --text: #e6edf3;
+      --text: #c9d1d9;
       --muted: #8b949e;
     }
     .light {
@@ -45,6 +45,8 @@
     .chevron { transition: transform 0.2s ease; }
     .chevron.rotate { transform: rotate(180deg); }
     .copy-btn:active { transform: scale(0.9); }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; display: inline-block; animation: pulse-dot 2s ease-in-out infinite; }
     @media print {
       body { background: white !important; color: black !important; }
       .no-print { display: none !important; }
@@ -120,14 +122,15 @@
 
     <!-- Hero -->
     <section class="hero-section text-center py-12 sm:py-16">
-      <h1 class="text-3xl sm:text-5xl font-extrabold mb-4" :style="'color: var(--text)'">
+      <h1 class="text-3xl sm:text-5xl font-extrabold mb-2" :style="'color: var(--text)'">
         <span x-text="t('heroPrefix')"></span> <span class="text-purple-500">Claude Code</span> <span x-text="t('heroSuffix')"></span>
       </h1>
+      <div class="mx-auto mb-4 h-px w-32" style="background: linear-gradient(to right, #a855f7, #f97316);"></div>
       <p class="text-lg mb-6 max-w-2xl mx-auto" :style="'color: var(--muted)'" x-text="t('heroSubtitle')"></p>
       <div class="flex items-center justify-center gap-3 flex-wrap">
-        <span class="bg-purple-500/20 text-purple-500 px-3 py-1 rounded-full text-sm font-medium" x-text="'v' + version"></span>
-        <span class="px-3 py-1 rounded-full text-sm" :style="'background: var(--card); border: 1px solid var(--border); color: var(--muted)'" x-text="t('updated') + ' ' + lastUpdated"></span>
-        <span class="px-3 py-1 rounded-full text-sm" :style="'background: var(--card); border: 1px solid var(--border); color: var(--muted)'" x-text="totalItems + ' ' + t('commands')"></span>
+        <span class="bg-purple-500/20 text-purple-500 px-3 py-1 rounded-full text-sm sm:text-base font-medium" x-text="'v' + version"></span>
+        <span class="px-3 py-1 rounded-full text-sm sm:text-base flex items-center gap-1.5" :style="'background: var(--card); border: 1px solid var(--border); color: var(--muted)'"><span class="pulse-dot"></span> <span x-text="t('updated') + ' ' + lastUpdated"></span></span>
+        <span class="px-3 py-1 rounded-full text-sm sm:text-base font-semibold" :style="'background: var(--card); border: 1px solid var(--border); color: var(--muted)'"><span class="text-3xl sm:text-4xl leading-none align-middle mr-1" :style="'color: var(--text)'" x-text="totalItems"></span> <span x-text="t('commands')"></span></span>
         <!-- OS Toggle -->
         <span class="px-3 py-1 rounded-full text-sm cursor-pointer select-none transition" :style="'background: var(--card); border: 1px solid var(--border); color: var(--muted)'" @click="toggleOS()" :title="t('switchTo') + ' ' + (isMac ? 'Windows/Linux' : 'Mac')">
           <span :style="isMac ? 'color: var(--text); font-weight: 500' : ''">Mac</span>
@@ -137,34 +140,46 @@
       </div>
     </section>
 
-    <!-- Section Nav Pills -->
-    <nav class="nav-pill flex gap-2 overflow-x-auto pb-4 mb-8 no-print lg:sticky lg:top-[56px] lg:z-40 lg:py-3 lg:-mx-4 lg:px-4 lg:backdrop-blur" :style="'background:' + (theme === 'light' ? 'rgba(255,255,255,0.9)' : 'rgba(13,17,23,0.9)')">
-      <template x-for="section in sections" :key="section.id">
-        <a
-          :href="'#' + section.id"
-          class="shrink-0 px-3 py-1.5 rounded-full text-sm font-medium border transition hover:opacity-80"
-          :style="'border-color:' + section.color + (activeSection === section.id ? '' : '40') + '; color:' + (activeSection === section.id ? '#fff' : section.color) + '; background:' + (activeSection === section.id ? section.color : section.color + '15')"
-          x-text="section.title"
-        ></a>
-      </template>
+    <!-- Section Nav — Mobile Dropdown -->
+    <nav class="mb-8 no-print lg:sticky lg:top-[56px] lg:z-40 lg:py-3 lg:-mx-4 lg:px-4 lg:backdrop-blur" :style="'background:' + (theme === 'light' ? 'rgba(255,255,255,0.9)' : 'rgba(13,17,23,0.9)')">
+      <select
+        class="sm:hidden w-full rounded-lg py-2 px-3 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-purple-500"
+        :style="'background: var(--card); border: 1px solid var(--border); color: var(--text)'"
+        @change="scrollToSection($event.target.value)"
+        :value="activeSection"
+      >
+        <template x-for="section in sections" :key="'sel-'+section.id">
+          <option :value="section.id" x-text="section.title"></option>
+        </template>
+      </select>
+      <!-- Desktop Pills -->
+      <div class="hidden sm:flex flex-wrap gap-2 nav-pill">
+        <template x-for="section in sections" :key="'pill-'+section.id">
+          <a
+            :href="'#' + section.id"
+            class="shrink-0 px-3 py-1.5 rounded-full text-sm font-medium border transition hover:opacity-80"
+            :style="'border-color:' + section.color + (activeSection === section.id ? '' : '40') + '; color:' + (activeSection === section.id ? '#fff' : section.color) + '; background:' + (activeSection === section.id ? section.color : section.color + '15')"
+            x-text="section.title"
+          ></a>
+        </template>
+      </div>
     </nav>
 
     <!-- Sections -->
-    <div id="sections-container">
+    <div id="sections-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
       <template x-for="section in filteredSections" :key="section.id">
-        <section :id="section.id" class="mb-10 print-break">
-          <div class="flex items-center gap-3 mb-4">
+        <section :id="section.id" class="print-break">
+          <div class="flex items-center gap-3 mb-4 py-4">
             <div class="w-1 h-6 rounded-full" :style="'background:' + section.color"></div>
             <h2 class="text-xl font-bold" :style="'color: var(--text)'" x-text="section.title"></h2>
             <span class="text-xs px-2 py-0.5 rounded-full" :style="'color: var(--muted); background: var(--card)'" x-text="section.items.length + ' items'"></span>
           </div>
           <div class="grid gap-2">
             <template x-for="(item, idx) in section.items" :key="section.id + '-' + idx">
-              <div class="rounded-lg overflow-hidden" :style="'background: var(--card); border: 1px solid var(--border)'">
-                <div
-                  class="flex items-center gap-3 px-4 py-3 cursor-pointer select-none transition"
+              <div class="group rounded-lg overflow-hidden" :style="'background: var(--card); border: 1px solid var(--border)'">
+                <button
+                  class="w-full flex items-center gap-3 px-4 py-3.5 min-h-[48px] cursor-pointer select-none transition text-left"
                   @click="toggle(section.id, idx)"
-                  style="hover:opacity:0.8"
                 >
                   <span
                     class="font-mono text-xs px-2 py-0.5 rounded shrink-0 font-medium"
@@ -184,16 +199,24 @@
                     ></span>
                   </template>
                   <span class="flex-1 text-sm" :style="'color: var(--text); opacity: 0.85'" x-text="item.description"></span>
-                  
+                  <!-- Copy button -->
+                  <span
+                    class="copy-btn shrink-0 p-1 rounded transition opacity-100 lg:opacity-0 lg:group-hover:opacity-100 no-print"
+                    :style="'color: var(--muted)'"
+                    @click.stop="copyItem(item.key, $event)"
+                    title="Copy"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </span>
                   <svg
-                    class="w-4 h-4 chevron no-print"
+                    class="w-4 h-4 chevron shrink-0 no-print"
                     :class="isOpen(section.id, idx) && 'rotate'"
                     :style="'color: var(--muted)'"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                   ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </div>
+                </button>
                 <div class="accordion-body" :class="isOpen(section.id, idx) && 'open'">
-                  <p class="px-4 pb-3 text-sm" :style="'color: var(--muted)'" x-text="item.explanation"></p>
+                  <p class="px-4 pl-4 pb-4 text-sm" :style="'color: var(--muted)'" x-text="item.explanation"></p>
                 </div>
               </div>
             </template>
@@ -355,6 +378,19 @@
 
         isOpen(sectionId, idx) {
           return this.openItems[sectionId + '-' + idx] || false;
+        },
+
+        scrollToSection(id) {
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+
+        async copyItem(key, event) {
+          await this.copyToClipboard(key);
+          const btn = event.currentTarget;
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+          setTimeout(() => { btn.innerHTML = orig; }, 1500);
         },
 
         async copyToClipboard(text) {
