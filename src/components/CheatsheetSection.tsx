@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
   Copy,
@@ -74,7 +73,7 @@ function CheatsheetItemRow({ item, color }: { item: CheatsheetItem; color: strin
         >
           {item.key}
         </code>
-        <span className="flex-1 text-sm text-[#e6edf3] truncate">
+        <span className="flex-1 text-sm text-[#e6edf3] line-clamp-2">
           {item.description}
         </span>
         <div className="flex items-center gap-1 shrink-0">
@@ -96,26 +95,20 @@ function CheatsheetItemRow({ item, color }: { item: CheatsheetItem; color: strin
           />
         </div>
       </button>
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden accordion-content"
+      <div
+        className={`overflow-hidden transition-all duration-200 ease-in-out ${
+          expanded ? "max-h-96 overflow-y-auto opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 pb-3 pt-0">
+          <div
+            className="text-sm text-[#8b949e] pl-3 border-l-2"
+            style={{ borderColor: `${color}50` }}
           >
-            <div className="px-4 pb-3 pt-0">
-              <div
-                className="text-sm text-[#8b949e] pl-3 border-l-2"
-                style={{ borderColor: `${color}50` }}
-              >
-                {item.explanation}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {item.explanation}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
