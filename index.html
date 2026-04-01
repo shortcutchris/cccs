@@ -476,8 +476,11 @@
               y += 8;
 
               for (const item of section.items) {
-                // PDF always uses raw key (no Mac symbols — jsPDF can't render ⌘/⌥)
-                const keyText = item.key;
+                // PDF: use text abbreviations (jsPDF can't render ⌘/⌥ symbols)
+                let keyText = item.key;
+                if (this.isMac) {
+                  keyText = keyText.replace(/\bCtrl\b/g, 'Cmd').replace(/\bAlt\b/g, 'Opt').replace(/\bOpt\b/g, 'Opt');
+                }
                 const descText = item.description;
                 const explText = item.explanation || '';
 
@@ -491,7 +494,7 @@
                 // Key badge — single box, full key as one string
                 doc.setFontSize(6.5);
                 doc.setFont('helvetica', 'bold');
-                const keyDisplay = keyText.replace(/\s*\+\s*/g, '+');
+                const keyDisplay = keyText.replace(/\s*\+\s*/g, ' + ');
                 const badgeW = Math.min(doc.getTextWidth(keyDisplay) + 4, colW - 2);
                 doc.setFillColor(240, 240, 240);
                 doc.setDrawColor(sr, sg, sb);
