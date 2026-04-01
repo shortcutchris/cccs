@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
   Copy,
@@ -62,10 +62,10 @@ function CheatsheetItemRow({ item, color }: { item: CheatsheetItem; color: strin
     <div className="cheatsheet-item border-b border-[#30363d]/50 last:border-0">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors text-left group"
+        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors text-left group min-w-0"
       >
         <code
-          className="key-badge shrink-0 px-2 py-0.5 rounded text-xs font-mono font-medium border"
+          className="key-badge shrink-0 max-w-[140px] truncate px-2 py-0.5 rounded text-xs font-mono font-medium border"
           style={{
             backgroundColor: `${color}15`,
             borderColor: `${color}30`,
@@ -138,13 +138,8 @@ export default function CheatsheetSection({
   if (searchQuery && filteredItems.length === 0) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.4 }}
-      className="section-card rounded-xl border border-[#30363d] bg-[#161b22] overflow-hidden shadow-lg shadow-black/10"
-    >
+    <div className="section-card rounded-xl border border-[#30363d] bg-[#161b22] overflow-hidden shadow-lg shadow-black/10 w-full min-w-0">
+
       {/* Section Header */}
       <div
         className="section-header flex items-center gap-3 px-4 py-3"
@@ -178,6 +173,6 @@ export default function CheatsheetSection({
           />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

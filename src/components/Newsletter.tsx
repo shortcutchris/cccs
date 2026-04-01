@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Mail, CheckCircle, Loader2, AlertCircle } from "lucide-react";
 
 export default function Newsletter() {
@@ -40,12 +39,7 @@ export default function Newsletter() {
   return (
     <section className="newsletter-section no-print py-16 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-2xl border border-[#30363d] bg-gradient-to-br from-[#161b22] to-[#1c2333]"
+        <div className="relative overflow-hidden rounded-2xl border border-[#30363d] bg-gradient-to-br from-[#161b22] to-[#1c2333]"
         >
           {/* Background decoration */}
           <div className="absolute inset-0 pointer-events-none">
@@ -67,14 +61,10 @@ export default function Newsletter() {
             </p>
 
             {status === "success" ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center justify-center gap-2 text-green-400"
-              >
+              <div className="flex items-center justify-center gap-2 text-green-400">
                 <CheckCircle className="w-5 h-5" />
                 <span>{message}</span>
-              </motion.div>
+              </div>
             ) : (
               <form
                 onSubmit={handleSubmit}
@@ -103,17 +93,13 @@ export default function Newsletter() {
             )}
 
             {status === "error" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center justify-center gap-2 text-red-400 text-sm mt-3"
-              >
+              <div className="flex items-center justify-center gap-2 text-red-400 text-sm mt-3">
                 <AlertCircle className="w-4 h-4" />
                 <span>{message}</span>
-              </motion.div>
+              </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
